@@ -7,7 +7,6 @@
     <style>
         body { 
             margin: 0;
-            padding: 0;
             text-align: center; 
             font-family: 'Arial', sans-serif; 
             background-color: #ffe6e6; 
@@ -18,8 +17,16 @@
             height: 100vh; 
             overflow: hidden; 
         }
-        h1 { color: #d63384; font-size: 2.5rem; }
-        .container { position: relative; width: 100%; height: 300px; }
+        h1 { color: #d63384; margin-bottom: 30px; }
+        
+        /* This box keeps the button from flying off-screen */
+        .game-area { 
+            position: relative; 
+            width: 80vw; 
+            height: 50vh; 
+            border: 2px dashed #ffb3c1; 
+            border-radius: 20px;
+        }
         
         button { 
             padding: 15px 30px; 
@@ -28,16 +35,26 @@
             border-radius: 10px; 
             border: none; 
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: absolute; /* Essential for movement */
         }
         
-        #yesBtn { background-color: #ff4d6d; color: white; margin-right: 20px; }
+        #yesBtn { 
+            background-color: #ff4d6d; 
+            color: white; 
+            left: 30%; 
+            top: 40%; 
+            transform: translate(-50%, -50%);
+        }
         
         #noBtn { 
             background-color: #6c757d; 
             color: white; 
-            position: absolute; /* REQUIRED for movement */
-            transition: 0.1s; 
-            touch-action: none; /* Prevents scrolling on mobile so it can move */
+            left: 70%; 
+            top: 40%; 
+            transform: translate(-50%, -50%);
+            /* This makes it slide smoothly instead of teleporting */
+            transition: all 0.2s ease-out; 
+            touch-action: none; 
         }
     </style>
 </head>
@@ -45,25 +62,30 @@
 
     <h1>Will you be my Valentine? ❤️</h1>
     
-    <div class="container">
-        <button id="yesBtn" onclick="alert('Yay! I knew you would say yes! 🥰')">YES</button>
+    <div class="game-area" id="area">
+        <button id="yesBtn" onclick="alert('Yay! Best day ever! 🥰')">YES</button>
         <button id="noBtn" onmouseover="moveButton()" onclick="moveButton()">NO</button>
     </div>
 
     <script>
         function moveButton() {
             const btn = document.getElementById('noBtn');
+            const area = document.getElementById('area');
             
-            // Calculate random positions (keeping it away from the edges)
-            const padding = 50;
-            const maxX = window.innerWidth - btn.offsetWidth - padding;
-            const maxY = window.innerHeight - btn.offsetHeight - padding;
+            // Get dimensions of the game area
+            const areaWidth = area.clientWidth;
+            const areaHeight = area.clientHeight;
             
-            const randomX = Math.floor(Math.random() * maxX);
-            const randomY = Math.floor(Math.random() * maxY);
+            // Calculate new random position within the box
+            // We subtract button width/height so it doesn't overlap the edges
+            const newX = Math.floor(Math.random() * (areaWidth - btn.offsetWidth));
+            const newY = Math.floor(Math.random() * (areaHeight - btn.offsetHeight));
             
-            btn.style.left = randomX + 'px';
-            btn.style.top = randomY + 'px';
+            // Apply new position
+            // We remove the transform translate so coordinates are exact
+            btn.style.transform = 'none'; 
+            btn.style.left = newX + 'px';
+            btn.style.top = newY + 'px';
         }
     </script>
 </body>
