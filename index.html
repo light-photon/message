@@ -8,18 +8,19 @@
         body { 
             margin: 0; 
             text-align: center; 
-            font-family: 'sans-serif'; 
+            font-family: sans-serif; 
             background-color: #ffe6e6; 
             display: flex; 
             flex-direction: column; 
             justify-content: center; 
             align-items: center; 
             height: 100vh; 
-            overflow: hidden; /* Prevents scrolling when button moves */
+            overflow: hidden; 
+            touch-action: none; /* Prevents the whole page from bouncing/scrolling */
         }
-        h1 { color: #d63384; font-size: 1.8rem; padding: 20px; }
+        h1 { color: #d63384; font-size: 1.6rem; padding: 10px; margin-bottom: 50px; }
         
-        .container { position: relative; width: 100%; height: 400px; }
+        .container { position: relative; width: 100vw; height: 300px; }
 
         button { 
             padding: 15px 25px; 
@@ -29,25 +30,25 @@
             border: none; 
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
             position: absolute;
-            touch-action: none; /* Crucial for mobile touch handling */
+            transition: all 0.15s ease-out;
         }
 
         #yesBtn { 
             background-color: #ff4d6d; 
             color: white; 
             left: 50%; 
-            top: 30%; 
+            top: 20%; 
             transform: translateX(-50%);
-            z-index: 10;
+            z-index: 20; /* Keep Yes on top */
         }
 
         #noBtn { 
             background-color: #6c757d; 
             color: white; 
             left: 50%; 
-            top: 50%; 
+            top: 60%; 
             transform: translateX(-50%);
-            transition: all 0.15s ease-out; /* Smooth short glide */
+            z-index: 10;
         }
     </style>
 </head>
@@ -56,25 +57,49 @@
     <h1>Will you be my Valentine? ❤️</h1>
     
     <div class="container">
-        <button id="yesBtn" onclick="alert('Yay! Best decision ever! 🥰')">YES</button>
-        <button id="noBtn" onmouseover="moveButton()" ontouchstart="moveButton()">NO</button>
+        <button id="yesBtn" onclick="celebrate()">YES</button>
+        <button id="noBtn">NO</button>
     </div>
 
     <script>
-        function moveButton() {
-            const btn = document.getElementById('noBtn');
-            
-            // The "Distance" it moves each time (short hop)
-            const moveDist = 80; 
-            
-            // Calculate current position
-            let currentTop = btn.offsetTop;
-            let currentLeft = btn.offsetLeft;
+        const noBtn = document.getElementById('noBtn');
 
-            // Pick a random direction (-1 or 1) and multiply by distance
+        // This function handles the move logic
+        function moveButton(e) {
+            e.preventDefault(); // STOPS the click/tap from happening
+            
+            const moveDist = 100; // How far it jumps
+            let currentTop = noBtn.offsetTop;
+            let currentLeft = noBtn.offsetLeft;
+
             let newTop = currentTop + (Math.random() < 0.5 ? -moveDist : moveDist);
             let newLeft = currentLeft + (Math.random() < 0.5 ? -moveDist : moveDist);
 
-            // Keep it within screen bounds so it doesn't disappear
-            const padding = 20;
-            if (newLeft < padding) newLeft =
+            // Bounds check for mobile screen
+            const pad = 30;
+            if (newLeft < pad) newLeft = pad;
+            if (newLeft > window.innerWidth - noBtn.offsetWidth - pad) 
+                newLeft = window.innerWidth - noBtn.offsetWidth - pad;
+            if (newTop < pad) newTop = pad;
+            if (newTop > window.innerHeight - noBtn.offsetHeight - pad) 
+                newTop = window.innerHeight - noBtn.offsetHeight - pad;
+
+            noBtn.style.left = newLeft + 'px';
+            noBtn.style.top = newTop + 'px';
+            noBtn.style.transform = 'none';
+        }
+
+        // Desktop: triggers on hover
+        noBtn.addEventListener('mouseover', moveButton);
+        
+        // Mobile: triggers the INSTANT a finger touches it
+        noBtn.addEventListener('touchstart', moveButton, {passive: false});
+
+        function celebrate() {
+            alert('Yay! Best decision ever! 🥰');
+            // Optional: add a redirect here
+            // window.location.href = "https://your-celebration-link.com";
+        }
+    </script>
+</body>
+</html>
