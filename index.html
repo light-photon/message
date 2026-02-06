@@ -22,20 +22,23 @@
 
         h1 { 
             color: #d63384; 
-            font-size: 1.8rem; 
+            font-size: 1.6rem; 
             position: absolute; 
-            top: 10%; 
+            top: 8%; 
             z-index: 10;
+            width: 90%;
+            text-align: center;
         }
 
-        /* Styling for your picture */
+        /* Image moved down to the center-ish area */
         .main-image {
-            width: 200px; /* Adjust size here */
+            width: 220px; 
             border-radius: 20px;
-            margin-bottom: 20px;
             box-shadow: 0 10px 20px rgba(0,0,0,0.1);
             position: absolute;
-            top: 20%;
+            top: 40%; /* Changed from 20% to 40% to bring it down */
+            left: 50%;
+            transform: translate(-50%, -50%);
         }
         
         button { 
@@ -52,7 +55,7 @@
             background-color: #ff4d6d; 
             color: white; 
             left: 50%; 
-            top: 60%; 
+            top: 70%; /* Positioned below the new image location */
             transform: translate(-50%, -50%);
             z-index: 100;
         }
@@ -61,7 +64,7 @@
             background-color: #888; 
             color: white; 
             left: 50%; 
-            top: 75%; 
+            top: 82%; /* Positioned below the Yes button */
             transform: translate(-50%, -50%);
             z-index: 50;
         }
@@ -107,8 +110,8 @@
         function celebrate() {
             clearInterval(autoMove);
             document.body.innerHTML = `
-                <div style="text-align:center;">
-                    <h1>Yay! ❤️ Thank you. You will have the best time ever this Staurday!</h1>
+                <div style="text-align:center; padding: 20px;">
+                    <h1 style="position:static; margin-bottom: 20px;">Yay! ❤️ Thank you. You will have the best time ever this Saturday!</h1>
                     <img src="https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExNXRpdjNucGYwNXVwcng2NjY2Z25wdDJmdnE5cHV1cWdlejFpZWRnciZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/13F7j1ePZWq3Be/giphy.gif" width="300" style="border-radius:20px;">
                 </div>
             `;
