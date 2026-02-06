@@ -2,59 +2,52 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Be My Valentine?</title>
     <style>
         body { 
-            margin: 0;
+            margin: 0; 
             text-align: center; 
-            font-family: 'Arial', sans-serif; 
+            font-family: 'sans-serif'; 
             background-color: #ffe6e6; 
             display: flex; 
             flex-direction: column; 
             justify-content: center; 
-            align-items: center;
+            align-items: center; 
             height: 100vh; 
-            overflow: hidden; 
+            overflow: hidden; /* Prevents scrolling when button moves */
         }
-        h1 { color: #d63384; margin-bottom: 30px; }
+        h1 { color: #d63384; font-size: 1.8rem; padding: 20px; }
         
-        /* This box keeps the button from flying off-screen */
-        .game-area { 
-            position: relative; 
-            width: 80vw; 
-            height: 50vh; 
-            border: 2px dashed #ffb3c1; 
-            border-radius: 20px;
-        }
-        
+        .container { position: relative; width: 100%; height: 400px; }
+
         button { 
-            padding: 15px 30px; 
-            font-size: 1.2rem; 
+            padding: 15px 25px; 
+            font-size: 1.1rem; 
             cursor: pointer; 
-            border-radius: 10px; 
+            border-radius: 50px; 
             border: none; 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            position: absolute; /* Essential for movement */
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            position: absolute;
+            touch-action: none; /* Crucial for mobile touch handling */
         }
-        
+
         #yesBtn { 
             background-color: #ff4d6d; 
             color: white; 
-            left: 30%; 
-            top: 40%; 
-            transform: translate(-50%, -50%);
+            left: 50%; 
+            top: 30%; 
+            transform: translateX(-50%);
+            z-index: 10;
         }
-        
+
         #noBtn { 
             background-color: #6c757d; 
             color: white; 
-            left: 70%; 
-            top: 40%; 
-            transform: translate(-50%, -50%);
-            /* This makes it slide smoothly instead of teleporting */
-            transition: all 0.2s ease-out; 
-            touch-action: none; 
+            left: 50%; 
+            top: 50%; 
+            transform: translateX(-50%);
+            transition: all 0.15s ease-out; /* Smooth short glide */
         }
     </style>
 </head>
@@ -62,31 +55,26 @@
 
     <h1>Will you be my Valentine? ❤️</h1>
     
-    <div class="game-area" id="area">
-        <button id="yesBtn" onclick="alert('Yay! Best day ever! 🥰')">YES</button>
-        <button id="noBtn" onmouseover="moveButton()" onclick="moveButton()">NO</button>
+    <div class="container">
+        <button id="yesBtn" onclick="alert('Yay! Best decision ever! 🥰')">YES</button>
+        <button id="noBtn" onmouseover="moveButton()" ontouchstart="moveButton()">NO</button>
     </div>
 
     <script>
         function moveButton() {
             const btn = document.getElementById('noBtn');
-            const area = document.getElementById('area');
             
-            // Get dimensions of the game area
-            const areaWidth = area.clientWidth;
-            const areaHeight = area.clientHeight;
+            // The "Distance" it moves each time (short hop)
+            const moveDist = 80; 
             
-            // Calculate new random position within the box
-            // We subtract button width/height so it doesn't overlap the edges
-            const newX = Math.floor(Math.random() * (areaWidth - btn.offsetWidth));
-            const newY = Math.floor(Math.random() * (areaHeight - btn.offsetHeight));
-            
-            // Apply new position
-            // We remove the transform translate so coordinates are exact
-            btn.style.transform = 'none'; 
-            btn.style.left = newX + 'px';
-            btn.style.top = newY + 'px';
-        }
-    </script>
-</body>
-</html>
+            // Calculate current position
+            let currentTop = btn.offsetTop;
+            let currentLeft = btn.offsetLeft;
+
+            // Pick a random direction (-1 or 1) and multiply by distance
+            let newTop = currentTop + (Math.random() < 0.5 ? -moveDist : moveDist);
+            let newLeft = currentLeft + (Math.random() < 0.5 ? -moveDist : moveDist);
+
+            // Keep it within screen bounds so it doesn't disappear
+            const padding = 20;
+            if (newLeft < padding) newLeft =
