@@ -5,10 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Be My Valentine?</title>
     <style>
+        /* Prevents mobile scrolling and bouncing */
+        * {
+            touch-action: none;
+            user-select: none;
+        }
+
         body { 
             margin: 0; 
             background-color: #ffe6e6; 
-            font-family: sans-serif; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
             height: 100vh; 
             width: 100vw; 
             overflow: hidden; 
@@ -16,36 +22,46 @@
             flex-direction: column; 
             align-items: center; 
             justify-content: center;
-            touch-action: none;
         }
-        h1 { color: #d63384; font-size: 1.5rem; text-align: center; position: absolute; top: 10%; width: 100%; }
+
+        h1 { 
+            color: #d63384; 
+            font-size: 1.8rem; 
+            text-align: center; 
+            position: absolute; 
+            top: 15%; 
+            width: 90%;
+            pointer-events: none; /* Text won't block clicks */
+        }
         
         button { 
             padding: 15px 30px; 
-            font-size: 1.1rem; 
+            font-size: 1.2rem; 
             border-radius: 50px; 
             border: none; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             cursor: pointer;
             position: fixed;
-            transition: all 0.6s ease-in-out; /* Smooth transition for auto-move */
+            transition: all 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         #yesBtn { 
             background-color: #ff4d6d; 
             color: white; 
             left: 50%; 
-            top: 40%; 
+            top: 45%; 
             transform: translate(-50%, -50%);
             z-index: 100;
+            font-weight: bold;
         }
 
         #noBtn { 
-            background-color: #6c757d; 
+            background-color: #888; 
             color: white; 
             left: 50%; 
-            top: 60%; 
+            top: 65%; 
             transform: translate(-50%, -50%);
+            z-index: 50;
         }
     </style>
 </head>
@@ -53,36 +69,51 @@
 
     <h1>Will you be my Valentine? ❤️</h1>
     
-    <button id="yesBtn" onclick="alert('Yay! ❤️')">YES</button>
+    <button id="yesBtn" onclick="celebrate()">YES</button>
     <button id="noBtn">NO</button>
 
     <script>
         const noBtn = document.getElementById('noBtn');
 
         function moveButton() {
-            // Calculate a random spot within the window bounds
-            const maxX = window.innerWidth - noBtn.offsetWidth;
-            const maxY = window.innerHeight - noBtn.offsetHeight;
+            // Screen boundaries
+            const padding = 40; 
+            const maxX = window.innerWidth - noBtn.offsetWidth - padding;
+            const maxY = window.innerHeight - noBtn.offsetHeight - padding;
 
-            const randomX = Math.floor(Math.random() * maxX);
-            const randomY = Math.floor(Math.random() * maxY);
+            // Pick a random spot
+            const randomX = Math.max(padding, Math.floor(Math.random() * maxX));
+            const randomY = Math.max(padding, Math.floor(Math.random() * maxY));
 
-            // Apply new position
             noBtn.style.left = randomX + 'px';
             noBtn.style.top = randomY + 'px';
             noBtn.style.transform = 'none'; 
         }
 
-        // 1. Move it automatically every 800 milliseconds
-        setInterval(moveButton, 800);
+        // 1. Automatically moves every 1200ms
+        let autoMove = setInterval(moveButton, 1200);
 
-        // 2. ALSO move it if they try to touch/hover it (extra protection)
-        noBtn.addEventListener('mouseover', moveButton);
-        noBtn.addEventListener('touchstart', (e) => {
+        // 2. Dodge faster if they try to touch/hover
+        const dodge = (e) => {
             e.preventDefault();
             moveButton();
-        }, {passive: false});
+            // Reset the timer so it doesn't move twice at the same time
+            clearInterval(autoMove);
+            autoMove = setInterval(moveButton, 1200);
+        };
 
+        noBtn.addEventListener('mouseover', dodge);
+        noBtn.addEventListener('touchstart', dodge, {passive: false});
+
+        function celebrate() {
+            clearInterval(autoMove); // Stop the No button from moving
+            document.body.innerHTML = `
+                <div style="text-align:center;">
+                    <h1 style="position:relative; top:0;">Yay! I love you! ❤️</h1>
+                    <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHY5eWoxeHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4JmVwPXYxX2ludGVybmFsX2dpZl9ieV9pZCZjdD1n/KztT2c4u8mYYUiMKdJ/giphy.gif" width="280">
+                </div>
+            `;
+        }
     </script>
 </body>
 </html>
