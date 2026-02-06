@@ -18,7 +18,7 @@
             justify-content: center;
             touch-action: none;
         }
-        h1 { color: #d63384; font-size: 1.5rem; text-align: center; margin-top: -100px; }
+        h1 { color: #d63384; font-size: 1.5rem; text-align: center; position: absolute; top: 10%; width: 100%; }
         
         button { 
             padding: 15px 30px; 
@@ -27,26 +27,25 @@
             border: none; 
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
             cursor: pointer;
-            position: absolute; /* Forced absolute for movement */
+            position: fixed;
+            transition: all 0.6s ease-in-out; /* Smooth transition for auto-move */
         }
 
         #yesBtn { 
             background-color: #ff4d6d; 
             color: white; 
-            /* Fixed position so it doesn't move */
             left: 50%; 
             top: 40%; 
             transform: translate(-50%, -50%);
+            z-index: 100;
         }
 
         #noBtn { 
             background-color: #6c757d; 
             color: white; 
-            /* Start position */
             left: 50%; 
-            top: 55%; 
+            top: 60%; 
             transform: translate(-50%, -50%);
-            transition: all 0.1s ease;
         }
     </style>
 </head>
@@ -60,30 +59,30 @@
     <script>
         const noBtn = document.getElementById('noBtn');
 
-        function moveButton(e) {
-            // This stops the phone from clicking the button
-            if (e) e.preventDefault();
+        function moveButton() {
+            // Calculate a random spot within the window bounds
+            const maxX = window.innerWidth - noBtn.offsetWidth;
+            const maxY = window.innerHeight - noBtn.offsetHeight;
 
-            // Calculate a random spot anywhere on the screen
-            // We subtract button size to keep it from going off-edge
-            const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
-            const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
+            const randomX = Math.floor(Math.random() * maxX);
+            const randomY = Math.floor(Math.random() * maxY);
 
-            // Directly override the CSS
-            noBtn.style.position = 'fixed';
-            noBtn.style.left = x + 'px';
-            noBtn.style.top = y + 'px';
-            noBtn.style.transform = 'none'; // Remove the initial centering
+            // Apply new position
+            noBtn.style.left = randomX + 'px';
+            noBtn.style.top = randomY + 'px';
+            noBtn.style.transform = 'none'; 
         }
 
-        // Listen for desktop hover
+        // 1. Move it automatically every 800 milliseconds
+        setInterval(moveButton, 800);
+
+        // 2. ALSO move it if they try to touch/hover it (extra protection)
         noBtn.addEventListener('mouseover', moveButton);
-        
-        // Listen for mobile touch (even a tiny tap)
-        noBtn.addEventListener('touchstart', moveButton, {passive: false});
-        
-        // Safety: move it if they somehow manage to click it
-        noBtn.addEventListener('click', moveButton);
+        noBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            moveButton();
+        }, {passive: false});
+
     </script>
 </body>
 </html>
