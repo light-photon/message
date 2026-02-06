@@ -7,48 +7,46 @@
     <style>
         body { 
             margin: 0; 
-            text-align: center; 
-            font-family: sans-serif; 
             background-color: #ffe6e6; 
+            font-family: sans-serif; 
+            height: 100vh; 
+            width: 100vw; 
+            overflow: hidden; 
             display: flex; 
             flex-direction: column; 
-            justify-content: center; 
             align-items: center; 
-            height: 100vh; 
-            overflow: hidden; 
-            touch-action: none; /* Prevents the whole page from bouncing/scrolling */
+            justify-content: center;
+            touch-action: none;
         }
-        h1 { color: #d63384; font-size: 1.6rem; padding: 10px; margin-bottom: 50px; }
+        h1 { color: #d63384; font-size: 1.5rem; text-align: center; margin-top: -100px; }
         
-        .container { position: relative; width: 100vw; height: 300px; }
-
         button { 
-            padding: 15px 25px; 
+            padding: 15px 30px; 
             font-size: 1.1rem; 
-            cursor: pointer; 
             border-radius: 50px; 
             border: none; 
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            position: absolute;
-            transition: all 0.15s ease-out;
+            cursor: pointer;
+            position: absolute; /* Forced absolute for movement */
         }
 
         #yesBtn { 
             background-color: #ff4d6d; 
             color: white; 
+            /* Fixed position so it doesn't move */
             left: 50%; 
-            top: 20%; 
-            transform: translateX(-50%);
-            z-index: 20; /* Keep Yes on top */
+            top: 40%; 
+            transform: translate(-50%, -50%);
         }
 
         #noBtn { 
             background-color: #6c757d; 
             color: white; 
+            /* Start position */
             left: 50%; 
-            top: 60%; 
-            transform: translateX(-50%);
-            z-index: 10;
+            top: 55%; 
+            transform: translate(-50%, -50%);
+            transition: all 0.1s ease;
         }
     </style>
 </head>
@@ -56,50 +54,36 @@
 
     <h1>Will you be my Valentine? ❤️</h1>
     
-    <div class="container">
-        <button id="yesBtn" onclick="celebrate()">YES</button>
-        <button id="noBtn">NO</button>
-    </div>
+    <button id="yesBtn" onclick="alert('Yay! ❤️')">YES</button>
+    <button id="noBtn">NO</button>
 
     <script>
         const noBtn = document.getElementById('noBtn');
 
-        // This function handles the move logic
         function moveButton(e) {
-            e.preventDefault(); // STOPS the click/tap from happening
-            
-            const moveDist = 100; // How far it jumps
-            let currentTop = noBtn.offsetTop;
-            let currentLeft = noBtn.offsetLeft;
+            // This stops the phone from clicking the button
+            if (e) e.preventDefault();
 
-            let newTop = currentTop + (Math.random() < 0.5 ? -moveDist : moveDist);
-            let newLeft = currentLeft + (Math.random() < 0.5 ? -moveDist : moveDist);
+            // Calculate a random spot anywhere on the screen
+            // We subtract button size to keep it from going off-edge
+            const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
+            const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
 
-            // Bounds check for mobile screen
-            const pad = 30;
-            if (newLeft < pad) newLeft = pad;
-            if (newLeft > window.innerWidth - noBtn.offsetWidth - pad) 
-                newLeft = window.innerWidth - noBtn.offsetWidth - pad;
-            if (newTop < pad) newTop = pad;
-            if (newTop > window.innerHeight - noBtn.offsetHeight - pad) 
-                newTop = window.innerHeight - noBtn.offsetHeight - pad;
-
-            noBtn.style.left = newLeft + 'px';
-            noBtn.style.top = newTop + 'px';
-            noBtn.style.transform = 'none';
+            // Directly override the CSS
+            noBtn.style.position = 'fixed';
+            noBtn.style.left = x + 'px';
+            noBtn.style.top = y + 'px';
+            noBtn.style.transform = 'none'; // Remove the initial centering
         }
 
-        // Desktop: triggers on hover
+        // Listen for desktop hover
         noBtn.addEventListener('mouseover', moveButton);
         
-        // Mobile: triggers the INSTANT a finger touches it
+        // Listen for mobile touch (even a tiny tap)
         noBtn.addEventListener('touchstart', moveButton, {passive: false});
-
-        function celebrate() {
-            alert('Yay! Best decision ever! 🥰');
-            // Optional: add a redirect here
-            // window.location.href = "https://your-celebration-link.com";
-        }
+        
+        // Safety: move it if they somehow manage to click it
+        noBtn.addEventListener('click', moveButton);
     </script>
 </body>
 </html>
